@@ -5,16 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link href="../CSS/loginstyle.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
     <form action="../PHP/login.php" method="post">
         <h1> Login</h1>
-        <p>Username: <input type="text" name="username" required /> </p>
-        <p>Password: <input type="password" name="password" required /> </p>
+        <div>
+            <label id="userlabel" for="user" class="text_label">Username: </label>
+            <input id="user" class="text_input" type="text" name="username" required />
+        </div>
+        
+        <div>
+            <label for="pass" class="text_label">Password:</label>
+            <input id="pass" class="text_input" type="password" name="password" required />
+        </div>
+         
         <input type="submit" />
         <input type="image" alt="submit button" src="../images/submit.jpg" width="150px" />
         <p><a href="request_access.html">Request Access</a></p>
-        
+        <p>Copyright &copy Michael Galle</p>
     </form>
 </body>
 </html>

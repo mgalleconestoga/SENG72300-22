@@ -1,0 +1,18 @@
+h1 {
+    color: red;
+}
+
+input {
+    width: 300px;
+}
+
+.text_label {
+    float: left;
+    width: 100px;
+    text-align: right;
+    padding-right: 10px;
+}
+
+form {
+    
+}
