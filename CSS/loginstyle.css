@@ -1,9 +1,18 @@
 h1 {
-    color: red;
+    color: rgb(0, 0, 0);
 }
 
 input {
     width: 300px;
+    
+}
+
+div.rw {
+    margin: 5px 0px;
+}
+
+.text_input {
+    padding-left: 25px;
 }
 
 .text_label {
@@ -13,6 +22,34 @@ input {
     padding-right: 10px;
 }
 
+#req_acc {
+    margin: 150px 0px 0px 35px;
+}
+
+#user {
+    background-image: url(../images/userIcon.jpg);
+    background-size: 20px;
+    background-repeat: no-repeat;
+}
+
+.passwd {
+    background-image: url("../images/passIcon.jpg");
+    background-size: 20px;
+    background-repeat: no-repeat;
+}
+
+#sub {
+    width: 100px;
+    display: none;
+}
+
+#subbtn {
+    width: 150px;
+    float: right;
+
+}
+
 form {
-    
+    width: 443px;
+    margin: 0px auto 0px auto;
 }
