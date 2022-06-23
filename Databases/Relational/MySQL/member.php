@@ -2,81 +2,53 @@
     // member.php
     session_start(); 
 
-    // members only section
+    // Members only section
     if(isset($_SESSION['username'])) {
-        // User is authenticated
-        echo "Welcome, " . $_SESSION['username'] . "<br />";
-        echo "<h1>Members only content goes here </h1>";
+        // Include the database functions file
+        require 'databaseFunctions.php';
 
-        // Display the form
-        require 'elevatorNetworkForm.html';
+        // Initialize variables
+        $host = '127.0.0.1'; 
+        $database = 'elevator'; 
+        $tablename = 'elevatorNetwork'; 
+        $path = 'mysql:host=' . $host . ';dbname=' . $database; 
+        $user = 'michael'; 
+        $password = 'ese';
 
         // Connect to database and make changes
-        $db = new PDO('mysql:host=127.0.0.1;dbname=elevator', 'michael', 'ese');
-        $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
-        //$submitted = !empty($_POST);
+        $db = connect($path, $user, $password);
+        
+        // Get data from db and/or form       
         $curr_date_query = $db->query('SELECT CURRENT_DATE()'); 
         $current_date = $curr_date_query->fetch(PDO::FETCH_ASSOC);
         $current_time_query = $db->query('SELECT CURRENT_TIME()');
         $current_time = $current_time_query->fetch(PDO::FETCH_ASSOC);
+        if(isset($_POST['nodeID'])) { $nodeID = $_POST['nodeID']; }
+        if(isset($_POST['status'])) { $status = $_POST['status']; }
+        if(isset($_POST['currentFloor'])) { $currentFloor = $_POST['currentFloor']; }
+        if(isset($_POST['requestedFloor'])) { $requestedFloor = $_POST['requestedFloor']; }
+        if(isset($_POST['otherInfo'])) { $otherInfo = $_POST['otherInfo']; }
 
-        
-        $status = $_POST['status'];
-        $currentFloor = $_POST['currentFloor'];
-        $requestedFloor = $_POST['requestedFloor'];
-        $otherInfo = $_POST['otherInfo'];
-
-        // Node ID 
-        $nodeID = $_POST['nodeID'];
-
+        // Display welcome and form
+        echo "<h1>Welcome, " . $_SESSION['username'] . "</h1>";
+        require 'elevatorNetworkForm.html';
+            
         if(isset($_POST['insert'])) {
             echo "You pressed INSERT <br>"; 
+            insert($path, $user, $password, $current_date, $current_time, $status, $currentFloor, $requestedFloor, $otherInfo);
 
-            // INSERT
-            $query = 'INSERT INTO elevatorNetwork(date, time, status, currentFloor, requestedFloor, otherInfo) VALUES
-                     (:date, :time, :status, :currentFloor, :requestedFloor, :otherInfo)';
-
-            $params = [
-                'date' => $current_date['CURRENT_DATE()'],
-                'time' => $current_time['CURRENT_TIME()'],
-                'status' => $status, 
-                'currentFloor' => $currentFloor,
-                'requestedFloor' => $requestedFloor, 
-                'otherInfo' => $otherInfo
-            ];
-            $statement = $db->prepare($query);
-            $result = $statement->execute($params); 
         } elseif(isset($_POST['update'])) {
             echo "You pressed UPDATE <br>";
-
-            // UPDATE
-            $query = 'UPDATE elevatorNetwork SET status = :stat WHERE nodeID = :id' ;    // Note: Risks of SQL injection
-            $statement = $db->prepare($query); 
-            $statement->bindValue('stat', $status); 
-            $statement->bindValue('id', $nodeID); 
-            // ... other parameters to change
-            $statement->execute();                      // Execute prepared statement
+            update($path, $user, $password, $tablename, $nodeID, $status, $currentFloor, $requestedFloor, $otherInfo);
 
         } elseif(isset($_POST['delete'])) {
             echo 'You pressed DELETE <br>';
-
+            delete($path, $user, $password, $tablename, $nodeID);
         } 
-
         // Display content of database
-        echo "<h3>Content of ElevatorNetwork table</h3>";
-        $query2 = 'SELECT * FROM elevatorNetwork GROUP BY nodeID ORDER BY nodeID';
-        $rows = $db->query($query2);
-        echo "DATE     |    TIME     |     NODEID    |     STATUS     | CURRENTFLOOR    | REQUESTED FLOOR | OTHERINFO <br>";
-        foreach ($rows as $row) {
-            echo $row['date'] . " | " . $row['time'] . " | " . $row['nodeID'] . " | " . $row['status'] . " | " 
-                              . $row['currentFloor'] . " | " . $row['requestedFloor'] . " | " . $row['otherInfo'] . "<br>";
-
-        } 
-
+        showtable($path, $user, $password, $tablename);
         // Sign out option
-        echo "<p>Click <a href='logout.php'>here</a> to log out</p>";
-
+        echo "<p>Click <a href='logout.php'>here</a> to sign out</p>";
     } else {
         echo "<p>You are not authorized!!! Go away!!!!!</p>";
     }
